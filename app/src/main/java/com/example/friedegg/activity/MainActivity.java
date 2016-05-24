@@ -1,4 +1,4 @@
-package com.example.friedegg;
+package com.example.friedegg.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.friedegg.R;
+import com.example.friedegg.base.BaseActivity;
 import com.example.friedegg.fragment.FreshNewsFragment;
 import com.example.friedegg.fragment.MainMenuFragment;
 import com.example.friedegg.modul.NetWorkEvent;

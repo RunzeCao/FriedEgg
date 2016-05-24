@@ -1,4 +1,4 @@
-package com.example.friedegg.fragment;
+package com.example.friedegg.base;
 
 import android.support.v4.app.Fragment;
 

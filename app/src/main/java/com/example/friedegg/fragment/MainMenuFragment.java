@@ -2,7 +2,9 @@ package com.example.friedegg.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,9 +16,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.friedegg.MainActivity;
+import com.example.friedegg.activity.MainActivity;
 import com.example.friedegg.R;
-import com.example.friedegg.SettingActivity;
+import com.example.friedegg.activity.SettingActivity;
+import com.example.friedegg.base.BaseFragment;
 import com.example.friedegg.modul.MenuItem;
 
 import java.util.ArrayList;
@@ -157,4 +160,16 @@ public class MainMenuFragment extends BaseFragment {
                 VideoFragment.class));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if (sp.getBoolean(SettingFragment.ENABLE_SISTER,false)&&mAdapter.menuItems.size() == 4){
+            addAllMenuItems(mAdapter);
+            mAdapter.notifyDataSetChanged();
+        }else if (!sp.getBoolean(SettingFragment.ENABLE_SISTER, false) && mAdapter.menuItems.size()== 5){
+            addMenuItemsNoSister(mAdapter);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
 }

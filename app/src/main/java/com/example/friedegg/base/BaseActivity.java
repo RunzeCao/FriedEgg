@@ -1,4 +1,4 @@
-package com.example.friedegg;
+package com.example.friedegg.base;
 
 import android.content.Context;
 import android.os.Bundle;
