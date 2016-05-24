@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -13,8 +14,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.example.friedegg.fragment.FreshNewsFragment;
+import com.example.friedegg.fragment.MainMenuFragment;
 import com.example.friedegg.modul.NetWorkEvent;
 import com.example.friedegg.utils.NetWorkUtil;
 
@@ -25,7 +31,9 @@ import org.greenrobot.eventbus.Subscribe;
 public class MainActivity extends BaseActivity {
 
     private BroadcastReceiver netStateReceiver;
-
+    private long exitTime;
+    private ActionBarDrawerToggle mActionBarDrawerToggle;
+    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +46,14 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         assert toolbar != null;
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ActionBarDrawerToggle mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.app_name, R.string.app_name) {
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.app_name, R.string.app_name) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 invalidateOptionsMenu();
@@ -59,6 +67,9 @@ public class MainActivity extends BaseActivity {
         mActionBarDrawerToggle.syncState();
         assert mDrawerLayout != null;
         mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
+
+        replaceFragment(R.id.frame_container,new FreshNewsFragment());
+        replaceFragment(R.id.drawer_container,new MainMenuFragment());
     }
 
     @Override
@@ -107,6 +118,8 @@ public class MainActivity extends BaseActivity {
                     dialog.dismiss();
                 }
             });
+            alertDialog.show();
+
         }
     }
 
@@ -114,5 +127,44 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(netStateReceiver);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mActionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mActionBarDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mActionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    public void closeDrawer() {
+        mDrawerLayout.closeDrawers();
     }
 }
