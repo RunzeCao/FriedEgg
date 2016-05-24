@@ -26,6 +26,7 @@ import com.example.friedegg.fragment.MainMenuFragment;
 import com.example.friedegg.modul.NetWorkEvent;
 import com.example.friedegg.utils.NetWorkUtil;
 
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
