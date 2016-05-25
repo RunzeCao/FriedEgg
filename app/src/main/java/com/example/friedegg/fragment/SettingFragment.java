@@ -12,8 +12,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 
 import com.example.friedegg.R;
-import com.example.friedegg.util.AppInfoUtil;
-import com.example.friedegg.util.ShowToast;
+import com.example.friedegg.adf.AppInfoUtil;
+import com.example.friedegg.adf.ShowToast;
 
 /**
  * A simple {@link Fragment} subclass.
