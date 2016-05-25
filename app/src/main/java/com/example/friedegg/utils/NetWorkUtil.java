@@ -1,4 +1,4 @@
-package com.example.friedegg.adf;
+package com.example.friedegg.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

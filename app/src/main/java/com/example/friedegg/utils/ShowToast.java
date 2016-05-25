@@ -5,7 +5,7 @@
  * Author：zhaokaiqiang
  * Date：2014-8-7
  */
-package com.example.friedegg.adf;
+package com.example.friedegg.utils;
 
 import android.support.annotation.NonNull;
 import android.widget.Toast;
