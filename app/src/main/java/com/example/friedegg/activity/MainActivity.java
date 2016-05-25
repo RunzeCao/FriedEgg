@@ -24,7 +24,7 @@ import com.example.friedegg.base.BaseActivity;
 import com.example.friedegg.fragment.FreshNewsFragment;
 import com.example.friedegg.fragment.MainMenuFragment;
 import com.example.friedegg.modul.NetWorkEvent;
-import com.example.friedegg.utils.NetWorkUtil;
+import com.example.friedegg.util.NetWorkUtil;
 
 
 import org.greenrobot.eventbus.EventBus;

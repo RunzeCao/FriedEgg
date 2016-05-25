@@ -1,4 +1,4 @@
-package com.example.friedegg.utils;
+package com.example.friedegg.util;
 
 import android.app.Activity;
 import android.content.pm.PackageInfo;
