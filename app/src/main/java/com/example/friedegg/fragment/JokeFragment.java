@@ -1,8 +1,6 @@
 package com.example.friedegg.fragment;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -75,9 +73,6 @@ public class JokeFragment extends BaseFragment implements LoadResultCallBack {
         });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setOnPauseListenerParams(false, true);
-
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean isLargeMode = sp.getBoolean(SettingFragment.ENABLE_FRESH_BIG, true);
 
         mAdapter = new JokeAdapter(getActivity(), mRecyclerView, this);
         mRecyclerView.setAdapter(mAdapter);

@@ -2,6 +2,7 @@ package com.example.friedegg.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -12,13 +13,13 @@ public class String2TimeUtil {
     /**
      * 转换日期格式到用户体验好的时间格式
      * @param time 2015-04-11 12:45:06
-     * @return
+     * @return string
      */
     public static String dateString2GoodExperienceFormat(String time) {
         if (isNullString(time)) {
             return "";
         } else {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08"));
             try {
                 String timeString;
@@ -28,8 +29,8 @@ public class String2TimeUtil {
                     timeString = "0 mins ago";
                 } else {
                     long n2 = distanceTime / 60000L;
-                    new SimpleDateFormat("HH:mm");
-                    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("MM-dd");
+                    new SimpleDateFormat("HH:mm",Locale.CHINA);
+                    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("MM-dd",Locale.CHINA);
                     if (n2 < 60L) {
                         timeString = String.valueOf(n2) + " mins ago";
                     } else if (n2 < 720L) {
