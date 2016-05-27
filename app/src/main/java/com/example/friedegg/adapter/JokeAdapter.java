@@ -31,6 +31,7 @@ import java.util.ArrayList;
 
 /**
  * Created by CRZ on 2016/5/25 17:13.
+ * JokeAdapter
  */
 public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder> {
     private int page;
