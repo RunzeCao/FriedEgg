@@ -36,3 +36,4 @@ captures/
 *.iml
 /app/app.iml
 /app/*.iml
+/*.iml
