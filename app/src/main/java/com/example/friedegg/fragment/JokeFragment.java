@@ -18,6 +18,7 @@ import com.example.friedegg.base.BaseFragment;
 import com.example.friedegg.base.ConstantString;
 import com.example.friedegg.callback.LoadMoreListener;
 import com.example.friedegg.callback.LoadResultCallBack;
+import com.example.friedegg.utils.LogUtils;
 import com.example.friedegg.utils.ShowToast;
 import com.example.friedegg.view.AutoLoadRecyclerView;
 
@@ -53,7 +54,14 @@ public class JokeFragment extends BaseFragment implements LoadResultCallBack {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        mRecyclerView.setLoadMoreListener(new LoadMoreListener() {
+            @Override
+            public void loadMore() {
+                mAdapter.loadNextPage();
+            }
+        });
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setOnPauseListenerParams(false, true);
         mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -65,14 +73,7 @@ public class JokeFragment extends BaseFragment implements LoadResultCallBack {
             }
         });
         mRecyclerView.setHasFixedSize(false);
-        mRecyclerView.setLoadMoreListener(new LoadMoreListener() {
-            @Override
-            public void loadMore() {
-                mAdapter.loadNextPage();
-            }
-        });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setOnPauseListenerParams(false, true);
+
 
         mAdapter = new JokeAdapter(getActivity(), mRecyclerView, this);
         mRecyclerView.setAdapter(mAdapter);
@@ -98,6 +99,7 @@ public class JokeFragment extends BaseFragment implements LoadResultCallBack {
 
     @Override
     public void onSuccess(int result, Object object) {
+        LogUtils.d("LoadResultCallBack.SUCCESS_OK");
         loading.setVisibility(View.GONE);
         if (mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
@@ -106,7 +108,8 @@ public class JokeFragment extends BaseFragment implements LoadResultCallBack {
 
     @Override
     public void onError(int code, String msg) {
-        loading.setVisibility(View.VISIBLE);
+        LogUtils.d("LoadResultCallBack.SUCCESS_ERROR");
+        loading.setVisibility(View.GONE);
         ShowToast.Short(ConstantString.LOAD_FAILED);
         if (mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);

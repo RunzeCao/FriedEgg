@@ -1,7 +1,10 @@
 package com.example.friedegg.adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,15 +20,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.friedegg.R;
 import com.example.friedegg.activity.CommentListActivity;
+import com.example.friedegg.base.ConstantString;
+import com.example.friedegg.cache.JokeCache;
 import com.example.friedegg.callback.LoadFinishCallBack;
 import com.example.friedegg.callback.LoadResultCallBack;
 import com.example.friedegg.modul.CommentNumber;
 import com.example.friedegg.modul.Joke;
+import com.example.friedegg.net.JSONParser;
 import com.example.friedegg.net.Request4CommentCounts;
 import com.example.friedegg.net.Request4Joke;
 import com.example.friedegg.net.RequestManager;
 import com.example.friedegg.utils.NetWorkUtil;
+import com.example.friedegg.utils.ShareUtils;
+import com.example.friedegg.utils.ShowToast;
 import com.example.friedegg.utils.String2TimeUtil;
+import com.example.friedegg.utils.TextUtil;
 
 import java.util.ArrayList;
 
@@ -41,7 +50,7 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
     private LoadResultCallBack mLoadResultCallBack;
     private LoadFinishCallBack mLoadFinisCallBack;
 
-    public JokeAdapter(Activity activity, LoadFinishCallBack loadFinishCallBack, LoadResultCallBack loadResultCallBack) {
+    public  JokeAdapter(Activity activity, LoadFinishCallBack loadFinishCallBack, LoadResultCallBack loadResultCallBack) {
         super();
         mActivity = activity;
         mLoadFinisCallBack = loadFinishCallBack;
@@ -82,7 +91,19 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
         holder.img_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Dialog dialog = new AlertDialog.Builder(mActivity).setItems(R.array.joke_dialog, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 0:
+                                ShareUtils.shareText(mActivity, joke.getComment_content().trim());
+                                break;
+                            case 1:
+                                TextUtil.copy(mActivity,joke.getComment_content().trim());
+                                break;
+                        }
+                    }
+                }).show();
             }
         });
         holder.ll_comment.setOnClickListener(new View.OnClickListener() {
@@ -105,21 +126,30 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
         page = 1;
         loadDataByNetworkType();
     }
-    
+
     public void loadNextPage() {
         page++;
         loadDataByNetworkType();
     }
 
     private void loadDataByNetworkType() {
-        if (NetWorkUtil.isNetWorkConnected(mActivity)){
+        if (NetWorkUtil.isNetWorkConnected(mActivity)) {
             loadData();
-        }else{
+        } else {
             loadCache();
         }
     }
 
     private void loadCache() {
+        JokeCache jokeCacheUtil = JokeCache.getInstance(mActivity);
+        if (page == 1) {
+            mJokes.clear();
+            ShowToast.Short(ConstantString.LOAD_NO_NETWORK);
+        }
+        mJokes.addAll(jokeCacheUtil.getCacheByPage(page));
+        notifyDataSetChanged();
+        mLoadFinisCallBack.loadFinish(null);
+        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
     }
 
     private void loadData() {
@@ -133,31 +163,32 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
             public void onErrorResponse(VolleyError volleyError) {
                 mLoadFinisCallBack.loadFinish(null);
             }
-        }),mActivity);
-        
+        }), mActivity);
+
     }
 
     private void getCommentCounts(final ArrayList<Joke> jokes) {
         StringBuilder builder = new StringBuilder();
-        for (Joke joke:jokes){
+        for (Joke joke : jokes) {
             builder.append("comment-").append(joke.getComment_ID()).append(",");
         }
         String url = builder.toString();
-        if (url.endsWith(",")){
-            url = url.substring(0,url.length()-1);
+        if (url.endsWith(",")) {
+            url = url.substring(0, url.length() - 1);
         }
         RequestManager.addRequest(new Request4CommentCounts(CommentNumber.getCommentCountsURL(url), new Response.Listener<ArrayList<CommentNumber>>() {
             @Override
             public void onResponse(ArrayList<CommentNumber> commentNumbers) {
-                for (int i = 0;i<jokes.size();i++){
-                    jokes.get(i).setComment_counts(commentNumbers.get(i).getComments()+"");
+                for (int i = 0; i < jokes.size(); i++) {
+                    jokes.get(i).setComment_counts(commentNumbers.get(i).getComments() + "");
                 }
-                if (page == 1){
+                if (page == 1) {
                     mJokes.clear();
                 }
                 mJokes.addAll(jokes);
                 notifyDataSetChanged();
-
+                //加载完毕后缓存
+                JokeCache.getInstance(mActivity).addResultCache(JSONParser.toString(jokes),page);
                 mLoadFinisCallBack.loadFinish(null);
                 mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
             }
@@ -167,7 +198,7 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
                 mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET, volleyError.getMessage());
                 mLoadFinisCallBack.loadFinish(null);
             }
-        }),mActivity);
+        }), mActivity);
     }
 
     public class JokeViewHolder extends RecyclerView.ViewHolder {

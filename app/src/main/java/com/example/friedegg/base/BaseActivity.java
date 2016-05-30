@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
  * Created by 123 on 2016/5/23.
  * BaseActivity
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements ConstantString{
     protected Context mContext;
 
     @Override
