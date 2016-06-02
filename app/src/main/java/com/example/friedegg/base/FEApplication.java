@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.example.friedegg.cache.BaseCache;
+import com.example.friedegg.view.imageloader.ImageLoaderProxy;
 
 import greendao.DaoMaster;
 import greendao.DaoSession;
@@ -21,6 +22,7 @@ public class FEApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        ImageLoaderProxy.initImageLoader(mContext);
     }
 
     public static Context getContext() {

@@ -17,4 +17,22 @@ public class TextUtil {
         clip.setPrimaryClip(ClipData.newPlainText(null, copyText));
         ShowToast.Short(ConstantString.COPY_SUCCESS);
     }
+    /**
+     * 判断是否为null、空字符串或者是"null"
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isNull(CharSequence... str) {
+
+        for (CharSequence cha : str) {
+            if (cha == null || cha.length() == 0 || cha.equals("null")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

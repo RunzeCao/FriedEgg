@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 /**
  * Created by CRZ on 2016/5/26 14:05.
+ * Request4CommentCounts
  */
 public class Request4CommentCounts extends Request<ArrayList<CommentNumber>> {
 

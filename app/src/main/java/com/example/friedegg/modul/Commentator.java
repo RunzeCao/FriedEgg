@@ -3,10 +3,12 @@ package com.example.friedegg.modul;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
  * Created by CRZ on 2016/5/30 16:06.
+ * 评论实体类
  * 按时间排序
  */
 public class Commentator implements Comparable, Commentable {
@@ -60,7 +62,7 @@ public class Commentator implements Comparable, Commentable {
         String thisTimeString = getCreated_at().replace("T", " ");
         thisTimeString = thisTimeString.substring(0, thisTimeString.indexOf("+"));
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08"));
 
         try {
