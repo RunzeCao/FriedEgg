@@ -100,7 +100,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     timeString = timeString.substring(0, timeString.indexOf("+"));
                     holder.tv_time.setText(String2TimeUtil.dateString2GoodExperienceFormat(timeString));
                     holder.tv_content.setText(commentator.getMessage());
-                    if (commentator.getAvatar_url()!= null) {
+                    if (commentator.getAvatar_url()!= "null") {
                         ImageLoaderProxy.displayHeadIcon(commentator.getAvatar_url().trim(), holder.img_header);
                     }else {
                         holder.img_header.setImageResource(R.drawable.ic_loading_small);

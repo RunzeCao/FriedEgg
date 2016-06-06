@@ -39,7 +39,6 @@ public class CommentListActivity extends BaseActivity implements LoadResultCallB
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogUtils.d("what the fuck?");
         setContentView(R.layout.activity_comment_list);
         initView();
         initData();

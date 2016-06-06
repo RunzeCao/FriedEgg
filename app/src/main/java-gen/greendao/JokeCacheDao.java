@@ -19,7 +19,7 @@ public class JokeCacheDao extends AbstractDao<JokeCache, Long> {
     public static final String TABLENAME = "JOKE_CACHE";
 
     /**
-     * Properties of entity JokeCache.<br/>
+     * Properties of entity MyJokeCache.<br/>
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {

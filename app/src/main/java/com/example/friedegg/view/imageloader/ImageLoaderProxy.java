@@ -62,7 +62,6 @@ public class ImageLoaderProxy {
      */
     public static void displayHeadIcon(String url, ImageView target) {
         imageLoader.displayImage(url, target, getOptions4Header());
-
     }
 
     /**

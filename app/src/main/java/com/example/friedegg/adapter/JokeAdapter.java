@@ -21,7 +21,7 @@ import com.android.volley.VolleyError;
 import com.example.friedegg.R;
 import com.example.friedegg.activity.CommentListActivity;
 import com.example.friedegg.base.ConstantString;
-import com.example.friedegg.cache.JokeCache;
+import com.example.friedegg.cache.MyJokeCache;
 import com.example.friedegg.callback.LoadFinishCallBack;
 import com.example.friedegg.callback.LoadResultCallBack;
 import com.example.friedegg.modul.CommentNumber;
@@ -141,7 +141,7 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
     }
 
     private void loadCache() {
-        JokeCache jokeCacheUtil = JokeCache.getInstance(mActivity);
+        MyJokeCache jokeCacheUtil = MyJokeCache.getInstance(mActivity);
         if (page == 1) {
             mJokes.clear();
             ShowToast.Short(ConstantString.LOAD_NO_NETWORK);
@@ -188,7 +188,7 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
                 mJokes.addAll(jokes);
                 notifyDataSetChanged();
                 //加载完毕后缓存
-                JokeCache.getInstance(mActivity).addResultCache(JSONParser.toString(jokes),page);
+                MyJokeCache.getInstance(mActivity).addResultCache(JSONParser.toString(jokes),page);
                 mLoadFinisCallBack.loadFinish(null);
                 mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
             }

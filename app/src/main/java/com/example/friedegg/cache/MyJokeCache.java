@@ -10,24 +10,25 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 import de.greenrobot.dao.query.QueryBuilder;
+import greendao.JokeCache;
 import greendao.JokeCacheDao;
 
 /**
  * Created by CRZ on 2016/5/30 10:24.
- * JokeCache
+ * MyJokeCache
  */
-public class JokeCache extends BaseCache {
-    private static JokeCache instance;
+public class MyJokeCache extends BaseCache {
+    private static MyJokeCache instance;
     private static JokeCacheDao mJokeCacheDao;
 
-    private JokeCache() {
+    private MyJokeCache() {
     }
 
-    public static JokeCache getInstance(Context context) {
+    public static MyJokeCache getInstance(Context context) {
         if (instance == null) {
-            synchronized (JokeCache.class) {
+            synchronized (MyJokeCache.class) {
                 if (instance == null) {
-                    instance = new JokeCache();
+                    instance = new MyJokeCache();
                 }
             }
             mDaoSession = FEApplication.getDaoSession(context);
@@ -43,7 +44,7 @@ public class JokeCache extends BaseCache {
 
     @Override
     public ArrayList<Joke> getCacheByPage(int page) {
-        QueryBuilder<greendao.JokeCache> query = mJokeCacheDao.queryBuilder().where(JokeCacheDao.Properties.Page.eq("" + page));
+        QueryBuilder<JokeCache> query = mJokeCacheDao.queryBuilder().where(JokeCacheDao.Properties.Page.eq("" + page));
         if (query.list().size() > 0) {
             return (ArrayList<Joke>) JSONParser.toObject(query.list().get(0).getResult(), new TypeToken<ArrayList<Joke>>() {
             }.getType());
@@ -53,7 +54,7 @@ public class JokeCache extends BaseCache {
 
     @Override
     public void addResultCache(String result, int page) {
-        greendao.JokeCache jokeCache = new greendao.JokeCache();
+        JokeCache jokeCache = new JokeCache();
         jokeCache.setResult(result);
         jokeCache.setPage(page);
         jokeCache.setTime(System.currentTimeMillis());
