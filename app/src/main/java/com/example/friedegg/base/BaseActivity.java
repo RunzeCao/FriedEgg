@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.friedegg.net.RequestManager;
+
 /**
  * Created by 123 on 2016/5/23.
  * BaseActivity
@@ -37,4 +39,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
         transaction.replace(id_content, fragment);
         transaction.commit();
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RequestManager.cancelAll(this);
+    }
+
 }

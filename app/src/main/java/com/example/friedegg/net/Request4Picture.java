@@ -8,10 +8,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.example.friedegg.modul.Picture;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
@@ -32,7 +30,7 @@ public class Request4Picture extends Request<ArrayList<Picture>> {
             String jsonStr = new String(networkResponse.data, HttpHeaderParser.parseCharset(networkResponse.headers));
             jsonStr = new JSONObject(jsonStr).getJSONArray("comments").toString();
 
-            ArrayList<Picture> pictures = (ArrayList<Picture>) JSONParser.toObject(jsonStr,new TypeToken<ArrayList<Picture>>(){});
+            ArrayList<Picture> pictures = (ArrayList<Picture>) JSONParser.toObject(jsonStr,new TypeToken<ArrayList<Picture>>(){}.getType());
             return Response.success(pictures,HttpHeaderParser.parseCacheHeaders(networkResponse));
         } catch (Exception e) {
             e.printStackTrace();

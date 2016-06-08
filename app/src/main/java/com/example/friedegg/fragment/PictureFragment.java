@@ -22,13 +22,16 @@ import com.example.friedegg.callback.LoadMoreListener;
 import com.example.friedegg.callback.LoadResultCallBack;
 import com.example.friedegg.modul.NetWorkEvent;
 import com.example.friedegg.modul.Picture;
-import com.example.friedegg.utils.LogUtils;
+import com.example.friedegg.utils.FEMediaScannerConnectionClient;
 import com.example.friedegg.utils.NetWorkUtil;
 import com.example.friedegg.utils.ShowToast;
 import com.example.friedegg.view.AutoLoadRecyclerView;
+import com.example.friedegg.view.imageloader.ImageLoaderProxy;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.io.File;
 
 /**
  * Created by 123 on 2016/5/24.
@@ -40,6 +43,7 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
     private AutoLoadRecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar loading;
+
     private PictureAdapter mAdapter;
     //用于记录是否是首次进入
     private boolean isFirstChange;
@@ -78,13 +82,16 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setLoadMoreListener(new LoadMoreListener() {
             @Override
             public void loadMore() {
+                mAdapter.loadNextPage();
             }
         });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setOnPauseListenerParams(false, true);
+
         mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -98,7 +105,7 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
 
         mAdapter = new PictureAdapter(getActivity(),this,mRecyclerView,mType);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setmSaveFileCallBack(this);
+        mAdapter.setSaveFileCallBack(this);
         mAdapter.loadFirst();
         loading.setVisibility(View.VISIBLE);
     }
@@ -107,6 +114,13 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //清除内存缓存，避免由于内存缓存造成的图片显示不完整
+        ImageLoaderProxy.getImageLoader().clearMemoryCache();
     }
 
     @Override
@@ -144,7 +158,14 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
 
     @Override
     public void loadFinish(Object obj) {
-
+        Bundle bundle = (Bundle) obj;
+        boolean isSmallPic = bundle.getBoolean(DATA_IS_SIAMLL_PIC);
+        String filePath = bundle.getString(DATA_FILE_PATH);
+        File newFile = new File(filePath);
+        FEMediaScannerConnectionClient connectionClient = new FEMediaScannerConnectionClient(isSmallPic,newFile);
+        connection = new MediaScannerConnection(getActivity(),connectionClient);
+        connectionClient.setMediaScannerConnection(connection);
+        connection.connect();
     }
     @Subscribe
     public void onEventMainThread(NetWorkEvent event) {

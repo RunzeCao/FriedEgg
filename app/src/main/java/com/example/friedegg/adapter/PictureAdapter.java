@@ -1,7 +1,13 @@
 package com.example.friedegg.adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +23,8 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.friedegg.R;
+import com.example.friedegg.activity.ImageDetailActivity;
+import com.example.friedegg.base.BaseActivity;
 import com.example.friedegg.base.ConstantString;
 import com.example.friedegg.cache.MyPictureCache;
 import com.example.friedegg.callback.LoadFinishCallBack;
@@ -27,7 +35,9 @@ import com.example.friedegg.net.JSONParser;
 import com.example.friedegg.net.Request4CommentCounts;
 import com.example.friedegg.net.Request4Picture;
 import com.example.friedegg.net.RequestManager;
+import com.example.friedegg.utils.FileUtil;
 import com.example.friedegg.utils.NetWorkUtil;
+import com.example.friedegg.utils.ShareUtils;
 import com.example.friedegg.utils.ShowToast;
 import com.example.friedegg.utils.String2TimeUtil;
 import com.example.friedegg.utils.TextUtil;
@@ -37,8 +47,6 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListe
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.ArrayList;
-
-import greendao.PictureCache;
 
 /**
  * Created by 润泽 on 2016/6/4.
@@ -70,6 +78,12 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
             viewToAnimation.setAnimation(animation);
             lastPosition = position;
         }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(PictureViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.card.clearAnimation();
     }
 
     @Override
@@ -118,7 +132,18 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
         holder.img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(mActivity, ImageDetailActivity.class);
 
+                intent.putExtra(BaseActivity.DATA_IMAGE_AUTHOR, picture.getComment_author());
+                intent.putExtra(BaseActivity.DATA_IMAGE_URL, picture.getPics());
+                intent.putExtra(BaseActivity.DATA_IMAGE_ID, picture.getComment_ID());
+                intent.putExtra(BaseActivity.DATA_THREAD_KEY, "comment-" + picture.getComment_ID());
+
+                if (picture.getPics()[0].endsWith(".gif")) {
+                    intent.putExtra(BaseActivity.DATA_IS_NEED_WEBVIEW, true);
+                }
+
+                mActivity.startActivity(intent);
             }
         });
 
@@ -126,6 +151,33 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
         holder.tv_time.setText(String2TimeUtil.dateString2GoodExperienceFormat(picture.getComment_date()));
         holder.tv_like.setText(picture.getVote_positive());
         holder.tv_comment_count.setText(picture.getComment_counts());
+        holder.tv_unlike.setText(picture.getVote_negative());
+        //用于恢复默认的文字
+        holder.tv_like.setTypeface(Typeface.DEFAULT);
+        holder.tv_like.setTextColor(ContextCompat.getColor(mActivity,R.color.secondary_text_default_material_light));
+        holder.tv_support_des.setTextColor(ContextCompat.getColor(mActivity,R.color.secondary_text_default_material_light));
+        holder.tv_unlike.setTypeface(Typeface.DEFAULT);
+        holder.tv_unlike.setTextColor(ContextCompat.getColor(mActivity,R.color.secondary_text_default_material_light));
+        holder.tv_un_support_des.setTextColor(ContextCompat.getColor(mActivity,R.color.secondary_text_default_material_light));
+
+        holder.img_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog dialog = new AlertDialog.Builder(mActivity).setItems(R.array.joke_dialog, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 0:
+                                ShareUtils.shareText(mActivity, picture.getPics()[0]);
+                                break;
+                            case 1:
+                                FileUtil.savePicture(mActivity,picture.getPics()[0],mSaveFileCallBack);
+                                break;
+                        }
+                    }
+                }).show();
+            }
+        });
     }
 
     @Override
@@ -214,7 +266,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
         }), mActivity);
     }
 
-    public void setmSaveFileCallBack(LoadFinishCallBack mSaveFileCallBack) {
+    public void setSaveFileCallBack(LoadFinishCallBack mSaveFileCallBack) {
         this.mSaveFileCallBack = mSaveFileCallBack;
     }
 

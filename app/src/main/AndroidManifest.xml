@@ -22,8 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.SettingActivity"/>
-        <activity android:name=".activity.CommentListActivity"/>
+        <activity android:name=".activity.SettingActivity" />
+        <activity android:name=".activity.CommentListActivity" />
+        <activity
+            android:name=".activity.ImageDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageDetailActivityTheme" />
     </application>
 
 </manifest>
