@@ -108,6 +108,7 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
         img_urls = intent.getStringArrayExtra(DATA_IMAGE_URL);
         threadKey = intent.getStringExtra(DATA_THREAD_KEY);
         isNeedWebView = intent.getBooleanExtra(DATA_IS_SIAMLL_PIC, false);
+        LogUtils.d(TAG,"img_urls: "+img_urls+" threadKey: "+threadKey+isNeedWebView);
 
         if (isNeedWebView) {
             webView.getSettings().setJavaScriptEnabled(true);

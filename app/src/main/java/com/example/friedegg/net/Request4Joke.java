@@ -31,8 +31,7 @@ public class Request4Joke extends Request<ArrayList<Joke>> {
             String jsonStr = new String(networkResponse.data, HttpHeaderParser.parseCharset(networkResponse.headers));
             jsonStr = new JSONObject(jsonStr).getJSONArray("comments").toString();
             //Json String 转换为 ArrayList<Joke>
-            return Response.success((ArrayList<Joke>) JSONParser.toObject(jsonStr, new TypeToken<ArrayList<Joke>>() {
-            }.getType()), HttpHeaderParser.parseCacheHeaders(networkResponse));
+            return Response.success((ArrayList<Joke>) JSONParser.toObject(jsonStr, new TypeToken<ArrayList<Joke>>() {}.getType()), HttpHeaderParser.parseCacheHeaders(networkResponse));
             //return Response.success((ArrayList<Joke>)new Gson().fromJson(jsonStr,new TypeToken<ArrayList<Joke>>(){}.getType()),HttpHeaderParser.parseCacheHeaders(networkResponse));
         } catch (Exception e) {
             e.printStackTrace();

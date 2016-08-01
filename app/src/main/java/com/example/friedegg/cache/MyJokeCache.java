@@ -46,8 +46,7 @@ public class MyJokeCache extends BaseCache {
     public ArrayList<Joke> getCacheByPage(int page) {
         QueryBuilder<JokeCache> query = mJokeCacheDao.queryBuilder().where(JokeCacheDao.Properties.Page.eq("" + page));
         if (query.list().size() > 0) {
-            return (ArrayList<Joke>) JSONParser.toObject(query.list().get(0).getResult(), new TypeToken<ArrayList<Joke>>() {
-            }.getType());
+            return (ArrayList<Joke>) JSONParser.toObject(query.list().get(0).getResult(), new TypeToken<ArrayList<Joke>>() {}.getType());
         }
         return new ArrayList<>();
     }

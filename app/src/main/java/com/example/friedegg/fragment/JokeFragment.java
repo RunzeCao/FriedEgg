@@ -47,7 +47,6 @@ public class JokeFragment extends BaseFragment implements LoadResultCallBack {
         mRecyclerView = (AutoLoadRecyclerView) view.findViewById(R.id.auto_recycler_view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         loading = (ProgressBar) view.findViewById(R.id.loading);
-
         return view;
     }
 

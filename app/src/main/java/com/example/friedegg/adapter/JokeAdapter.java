@@ -67,7 +67,7 @@ public class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeViewHolder
     }
 
     @Override
-    //当view画出屏幕是调用
+    //当view滑出屏幕时调用
     public void onViewDetachedFromWindow(JokeViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         holder.card.clearAnimation();
