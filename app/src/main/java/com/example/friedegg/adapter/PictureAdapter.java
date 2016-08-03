@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.friedegg.R;
+import com.example.friedegg.activity.CommentListActivity;
 import com.example.friedegg.activity.ImageDetailActivity;
 import com.example.friedegg.base.BaseActivity;
 import com.example.friedegg.base.ConstantString;
@@ -178,6 +179,17 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PictureV
                 }).show();
             }
         });
+        holder.ll_comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity, CommentListActivity.class);
+                intent.putExtra(BaseActivity.DATA_THREAD_KEY, "comment-" + picture.getComment_ID());
+                mActivity.startActivity(intent);
+            }
+        });
+
+        setAnimation(holder.card, position);
+
     }
 
     @Override

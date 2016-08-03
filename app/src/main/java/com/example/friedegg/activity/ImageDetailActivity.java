@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -44,7 +45,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 public class ImageDetailActivity extends BaseActivity implements View.OnClickListener, LoadFinishCallBack {
 
-    private static final String TAG = "ImageDetailActivity";
+    private static final String TAG = ImageDetailActivity.class.getSimpleName();
 
     private WebView webView;
     private PhotoView img;
@@ -67,9 +68,9 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
         setContentView(R.layout.activity_image_detail);
-        LogUtils.d(TAG,"onCreate");
+        Log.d(TAG,"onCreate");
         initView();
-        initData();
+       // initData();
     }
 
     @Override
@@ -190,8 +191,8 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        toggleBar();
+        //super.onWindowFocusChanged(hasFocus);
+       // toggleBar();
     }
 
     private void showImgInWebView(String s) {

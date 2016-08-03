@@ -1,9 +1,15 @@
 package com.example.friedegg.fragment;
 
-import android.support.v4.app.Fragment;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 
-/**
- * Created by 123 on 2016/5/24.
- */
-public class SisterFragment extends Fragment {
+import com.example.friedegg.modul.Picture;
+
+public class SisterFragment extends PictureFragment {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        mType = Picture.PictureType.Sister;
+    }
 }

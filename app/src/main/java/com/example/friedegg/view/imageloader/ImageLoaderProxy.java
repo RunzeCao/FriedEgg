@@ -14,10 +14,6 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-/**
- * Created by CRZ on 2016/6/2 15:03.
- * ImageLoaderProxy
- */
 public class ImageLoaderProxy {
     private static final int MAX_DISK_CACHE = 1024 * 1024 * 50;
     private static final int MAX_MEMORY_CACHE = 1024 * 1024 * 10;
