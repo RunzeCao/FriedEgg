@@ -8,7 +8,7 @@ public interface ConstantString {
     String SAVE_FAILED = "神秘力量导致保存失败";
     String LOAD_SHARE = "神秘力量导致分享失败";
 
-    String INPUT_TOO_SHORT = "你的..太短..";
+    String INPUT_TOO_SHORT = "内容不能为空";
     String COPY_SUCCESS = "复制成功";
     String SAVE_SUCCESS = "保存成功";
     String SAVE_SMALL_SUCCESS = "保存缩略图成功";

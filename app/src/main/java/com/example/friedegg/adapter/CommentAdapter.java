@@ -1,6 +1,12 @@
 package com.example.friedegg.adapter;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +16,16 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.friedegg.R;
+import com.example.friedegg.activity.PushCommentActivity;
+import com.example.friedegg.base.ConstantString;
 import com.example.friedegg.callback.LoadFinishCallBack;
 import com.example.friedegg.callback.LoadResultCallBack;
 import com.example.friedegg.modul.Comment4FreshNews;
 import com.example.friedegg.modul.Commentator;
 import com.example.friedegg.net.Request4CommentList;
+import com.example.friedegg.net.Request4FreshNewsCommentList;
 import com.example.friedegg.net.RequestManager;
+import com.example.friedegg.utils.ShowToast;
 import com.example.friedegg.utils.String2TimeUtil;
 import com.example.friedegg.view.floorview.FloorView;
 import com.example.friedegg.view.floorview.SubComments;
@@ -25,6 +35,7 @@ import com.example.friedegg.view.imageloader.ImageLoaderProxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -90,19 +101,40 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 holder.tv_content.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        new AlertDialog.Builder(mActivity).setTitle(comment.getName()).setItems(R.array.comment_dialog, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case 0:
+                                        Intent intent = new Intent(mActivity, PushCommentActivity.class);
+                                        intent.putExtra("parent_id", comment.getPost_id());
+                                        intent.putExtra("thread_id", thread_id);
+                                        intent.putExtra("parent_name", comment.getName());
+                                        mActivity.startActivityForResult(intent, 0);
+                                        break;
+                                    case 1:
+                                        //复制到剪贴板
+                                        ClipboardManager clip = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+                                        clip.setPrimaryClip(ClipData.newPlainText(null, comment.getMessage()));
+                                        ShowToast.Short(ConstantString.COPY_SUCCESS);
+                                        break;
+                                }
+                            }
+                        }).show();
                     }
                 });
                 if (isFromFreshNews) {
-
+                    Comment4FreshNews commentators4FreshNews = (Comment4FreshNews) commentator;
+                    holder.tv_content.setText(commentators4FreshNews.getCommentContent());
+                    ImageLoaderProxy.displayHeadIcon(commentators4FreshNews.getAvatar_url(), holder.img_header);
                 } else {
                     String timeString = commentator.getCreated_at().replace("T", " ");
                     timeString = timeString.substring(0, timeString.indexOf("+"));
                     holder.tv_time.setText(String2TimeUtil.dateString2GoodExperienceFormat(timeString));
                     holder.tv_content.setText(commentator.getMessage());
-                    if (commentator.getAvatar_url()!= "null") {
+                    if (commentator.getAvatar_url() != "null") {
                         ImageLoaderProxy.displayHeadIcon(commentator.getAvatar_url().trim(), holder.img_header);
-                    }else {
+                    } else {
                         holder.img_header.setImageResource(R.drawable.ic_loading_small);
                     }
                 }
@@ -223,6 +255,57 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     public void loadData4FreshNews() {
+        RequestManager.addRequest(new Request4FreshNewsCommentList(Comment4FreshNews.getUrlComments(thread_key), new Response.Listener<ArrayList<Comment4FreshNews>>() {
+            @Override
+            public void onResponse(ArrayList<Comment4FreshNews> response) {
+                if (response.size() == 0) {
+                    mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_NONE, null);
+                } else {
+                    commentators4FreshNews.clear();
+                    //如果评论条数大于6，就选择positive前6作为热门评论
+                    if (response.size() > 6) {
+                        Comment4FreshNews comment4FreshNews = new Comment4FreshNews();
+                        comment4FreshNews.setType(Commentator.TYPE_HOT);
+                        commentators4FreshNews.add(comment4FreshNews);
+
+                        Collections.sort(response, new Comparator<Comment4FreshNews>() {
+
+                            @Override
+                            public int compare(Comment4FreshNews lhs, Comment4FreshNews rhs) {
+                                return lhs.getVote_positive() <= rhs.getVote_positive() ? 1 : -1;
+                            }
+                        });
+
+                        List<Comment4FreshNews> subComments = response.subList(0, 6);
+                        for (Comment4FreshNews subComment:subComments){
+                            subComment.setTag(Comment4FreshNews.TAG_HOT);
+                        }
+                        commentators4FreshNews.addAll(subComments);
+                    }
+                    Comment4FreshNews comment4FreshNews = new Comment4FreshNews();
+                    comment4FreshNews.setType(Comment4FreshNews.TYPE_NEW);
+                    commentators4FreshNews.add(comment4FreshNews);
+                    Collections.sort(response);
+                    for (Comment4FreshNews comment4Normal : response) {
+                        if (comment4Normal.getTag().equals(Comment4FreshNews.TAG_NORMAL)) {
+                            commentators4FreshNews.add(comment4Normal);
+                        }
+                    }
+                    notifyDataSetChanged();
+                    mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                mLoadResultCallBack.onError(LoadResultCallBack.ERROR_NET, volleyError.getMessage());
+            }
+        }, new LoadFinishCallBack() {
+            @Override
+            public void loadFinish(Object obj) {
+                thread_id = (String) obj;
+            }
+        }), mActivity);
     }
 
     static class CommentViewHolder extends RecyclerView.ViewHolder {

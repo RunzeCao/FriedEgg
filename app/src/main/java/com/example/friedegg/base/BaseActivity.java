@@ -2,11 +2,11 @@ package com.example.friedegg.base;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.android.volley.Request;
 import com.example.friedegg.net.RequestManager;
 
 /**
@@ -17,8 +17,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
     protected Context mContext;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mContext = this;
     }
 
@@ -39,6 +39,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Constant
         transaction.replace(id_content, fragment);
         transaction.commit();
     }
+    public void executeRequest(Request<?> request) {
+        RequestManager.addRequest(request, this);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

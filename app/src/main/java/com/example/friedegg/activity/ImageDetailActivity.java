@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -65,8 +64,8 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
     private MediaScannerConnection connection;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_detail);
         Log.d(TAG,"onCreate");
         initView();

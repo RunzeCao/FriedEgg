@@ -17,10 +17,7 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * 新鲜事评论
- * Created by zhaokaiqiang on 15/4/8.
- */
+
 public class Request4FreshNewsCommentList extends Request<ArrayList<Comment4FreshNews>> {
 
     private Response.Listener<ArrayList<Comment4FreshNews>> mListener;
@@ -43,8 +40,7 @@ public class Request4FreshNewsCommentList extends Request<ArrayList<Comment4Fres
             String status = resultObj.optString("status");
 
             if (status.equals("ok")) {
-                String commentsStr = resultObj.optJSONObject("post").optJSONArray("comments")
-                        .toString();
+                String commentsStr = resultObj.optJSONObject("post").optJSONArray("comments").toString();
                 int id = resultObj.optJSONObject("post").optInt("id");
                 mCallBack.loadFinish(Integer.toString(id));
 

@@ -25,6 +25,7 @@ import com.example.friedegg.modul.FreshNews;
 import com.example.friedegg.net.JSONParser;
 import com.example.friedegg.net.Request4FreshNews;
 import com.example.friedegg.net.RequestManager;
+import com.example.friedegg.utils.LogUtils;
 import com.example.friedegg.utils.NetWorkUtil;
 import com.example.friedegg.utils.ShareUtils;
 import com.example.friedegg.utils.ShowToast;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 
 
 public class FreshNewsAdapter extends RecyclerView.Adapter<FreshNewsAdapter.ViewHolder> {
+    private static final String TAG = FreshNewsAdapter.class.getSimpleName();
     private int page;
     private int lastPosition = -1;
     private boolean isLargeMode;
@@ -57,8 +59,7 @@ public class FreshNewsAdapter extends RecyclerView.Adapter<FreshNewsAdapter.View
 
     private void setAnimation(View viewToAnimate, int position) {
         if (position > lastPosition) {
-            Animation animation = AnimationUtils.loadAnimation(viewToAnimate.getContext(), R
-                    .anim.item_bottom_in);
+            Animation animation = AnimationUtils.loadAnimation(viewToAnimate.getContext(), R.anim.item_bottom_in);
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
         }
@@ -167,6 +168,7 @@ public class FreshNewsAdapter extends RecyclerView.Adapter<FreshNewsAdapter.View
         Intent intent = new Intent(mActivity, FreshNewsDetailActivity.class);
         intent.putExtra(ConstantString.DATA_FRESH_NEWS, mFreshNews);
         intent.putExtra(ConstantString.DATA_POSITION, position);
+        LogUtils.d(TAG,position+"");
         mActivity.startActivity(intent);
     }
 
