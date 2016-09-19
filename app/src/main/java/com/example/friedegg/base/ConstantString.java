@@ -30,7 +30,7 @@ public interface ConstantString {
     String DATA_IMAGE_AUTHOR = "img_author";
     String DATA_IS_NEED_WEBVIEW = "is_need_webview";
 
-    String DATA_IS_SIAMLL_PIC =  "isSmallPic";
+    String DATA_IS_SMALL_PIC =  "isSmallPic";
     String DATA_FILE_PATH =  "file_path";
 
 }

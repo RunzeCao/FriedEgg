@@ -159,7 +159,7 @@ public class PictureFragment extends BaseFragment implements LoadResultCallBack,
     @Override
     public void loadFinish(Object obj) {
         Bundle bundle = (Bundle) obj;
-        boolean isSmallPic = bundle.getBoolean(DATA_IS_SIAMLL_PIC);
+        boolean isSmallPic = bundle.getBoolean(DATA_IS_SMALL_PIC);
         String filePath = bundle.getString(DATA_FILE_PATH);
         File newFile = new File(filePath);
         FEMediaScannerConnectionClient connectionClient = new FEMediaScannerConnectionClient(isSmallPic,newFile);

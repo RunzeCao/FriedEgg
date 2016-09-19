@@ -67,9 +67,9 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_detail);
-        Log.d(TAG,"onCreate");
+        Log.d(TAG, "onCreate");
         initView();
-       // initData();
+        initData();
     }
 
     @Override
@@ -107,8 +107,8 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
         Intent intent = getIntent();
         img_urls = intent.getStringArrayExtra(DATA_IMAGE_URL);
         threadKey = intent.getStringExtra(DATA_THREAD_KEY);
-        isNeedWebView = intent.getBooleanExtra(DATA_IS_SIAMLL_PIC, false);
-        LogUtils.d(TAG,"img_urls: "+img_urls+" threadKey: "+threadKey+isNeedWebView);
+        isNeedWebView = intent.getBooleanExtra(DATA_IS_NEED_WEBVIEW, false);
+        LogUtils.d(TAG, "img_urls: " + img_urls + " threadKey: " + threadKey + isNeedWebView);
 
         if (isNeedWebView) {
             webView.getSettings().setJavaScriptEnabled(true);
@@ -128,10 +128,10 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     progressBar.setVisibility(View.GONE);
                     imgCacheFile = DiskCacheUtils.findInCache(img_urls[0], ImageLoaderProxy.getImageLoader().getDiskCache());
-                    LogUtils.d(TAG,"imgCacheFile: "+imgCacheFile.toString());
+                    LogUtils.d(TAG, "imgCacheFile: " + imgCacheFile.toString());
                     if (imgCacheFile != null) {
                         imgPath = "file://" + imgCacheFile.getAbsolutePath();
-                        LogUtils.d(TAG,"imgPath: "+imgPath.toString());
+                        LogUtils.d(TAG, "imgPath: " + imgPath.toString());
                         showImgInWebView(imgPath);
                         isImgHaveLoad = true;
                     }
@@ -150,8 +150,8 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
                 }
 
             });
-        }else{
-            ImageLoaderProxy.loadImageFromLocalCache(img_urls[0],new SimpleImageLoadingListener(){
+        } else {
+            ImageLoaderProxy.loadImageFromLocalCache(img_urls[0], new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                     progressBar.setVisibility(View.GONE);
@@ -160,18 +160,19 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
 
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                   if (loadedImage.getHeight()> ScreenSizeUtil.getScreenWidth(ImageDetailActivity.this)){
-                       imgCacheFile = DiskCacheUtils.findInCache(img_urls[0],ImageLoaderProxy.getImageLoader().getDiskCache());
-                       if (imgCacheFile != null){
-                           imgPath = "file://"+imgCacheFile.getAbsolutePath();
-                           img.setVisibility(View.GONE);
-                           showImgInWebView(imgPath);
-                           isImgHaveLoad = true;
-                       }
-                   }else {
-                       img.setImageBitmap(loadedImage);
-                       isImgHaveLoad = true;
-                   }
+                    progressBar.setVisibility(View.GONE);
+                    if (loadedImage.getHeight() > ScreenSizeUtil.getScreenWidth(ImageDetailActivity.this)) {
+                        imgCacheFile = DiskCacheUtils.findInCache(img_urls[0], ImageLoaderProxy.getImageLoader().getDiskCache());
+                        if (imgCacheFile != null) {
+                            imgPath = "file://" + imgCacheFile.getAbsolutePath();
+                            img.setVisibility(View.GONE);
+                            showImgInWebView(imgPath);
+                            isImgHaveLoad = true;
+                        }
+                    } else {
+                        img.setImageBitmap(loadedImage);
+                        isImgHaveLoad = true;
+                    }
                 }
 
                 @Override
@@ -183,15 +184,15 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
         img.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
             @Override
             public void onViewTap(View view, float v, float v1) {
-               toggleBar();
+                toggleBar();
             }
         });
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        //super.onWindowFocusChanged(hasFocus);
-       // toggleBar();
+        super.onWindowFocusChanged(hasFocus);
+        toggleBar();
     }
 
     private void showImgInWebView(String s) {
@@ -287,11 +288,10 @@ public class ImageDetailActivity extends BaseActivity implements View.OnClickLis
     public void loadFinish(Object obj) {
         //下载完图片后，通知更新
         Bundle bundle = (Bundle) obj;
-        boolean isSmallPic = bundle.getBoolean(DATA_IS_SIAMLL_PIC);
+        boolean isSmallPic = bundle.getBoolean(DATA_IS_SMALL_PIC);
         String filePath = bundle.getString(DATA_FILE_PATH);
         File newFile = new File(filePath);
-        FEMediaScannerConnectionClient connectionClient = new FEMediaScannerConnectionClient(isSmallPic,
-                newFile);
+        FEMediaScannerConnectionClient connectionClient = new FEMediaScannerConnectionClient(isSmallPic, newFile);
         connection = new MediaScannerConnection(this, connectionClient);
         connectionClient.setMediaScannerConnection(connection);
         connection.connect();
