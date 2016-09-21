@@ -34,7 +34,7 @@ captures/
 
 *.idea
 *.iml
-/app/app.iml
-/app/*.iml
-/*.iml
 libs/
+projectFilesBackup/
+/gradlew.bat
+/gradlew

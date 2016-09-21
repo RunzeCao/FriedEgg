@@ -25,6 +25,9 @@
     EventBus.getDefault().register(this);//订阅事件
     EventBus.getDefault().post(object);//发布事件
     EventBus.getDefault().unregister(this);//取消订阅
+    register会把当前类中匹配的方法，存入一个map，而post会根据实参去map查找进行反射调用
+    一个单例内部维持着一个map对象存储了一堆的方法；post无非就是根据参数去查找方法，进行反射调用。
+
 
    EventBus包含4个ThreadMode：PostThread，MainThread，BackgroundThread，Async
    - onEventMainThread代表这个方法会在UI线程执行
@@ -32,5 +35,3 @@
    - BackgroundThread这个方法，如果在非UI线程发布的事件，则直接执行，和发布在同一个线程中。如果在UI线程发布的事件，则加入后台任务队列，使用线程池一个接一个调用。
    - Async 加入后台任务队列，使用线程池调用，注意没有BackgroundThread中的一个接一个。
 
-    register会把当前类中匹配的方法，存入一个map，而post会根据实参去map查找进行反射调用
-    一个单例内部维持着一个map对象存储了一堆的方法；post无非就是根据参数去查找方法，进行反射调用。
