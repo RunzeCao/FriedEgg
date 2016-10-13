@@ -19,7 +19,7 @@ public class VideoCacheDao extends AbstractDao<VideoCache, Long> {
     public static final String TABLENAME = "VIDEO_CACHE";
 
     /**
-     * Properties of entity VideoCache.<br/>
+     * Properties of entity MyVideoCache.<br/>
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
