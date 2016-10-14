@@ -1,6 +1,14 @@
 package com.example.friedegg.adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +21,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.friedegg.R;
+import com.example.friedegg.activity.CommentListActivity;
+import com.example.friedegg.activity.VideoDetailActivity;
+import com.example.friedegg.base.BaseActivity;
+import com.example.friedegg.base.ConstantString;
 import com.example.friedegg.cache.MyVideoCache;
 import com.example.friedegg.callback.LoadFinishCallBack;
 import com.example.friedegg.callback.LoadResultCallBack;
@@ -24,6 +36,9 @@ import com.example.friedegg.okhttp.OkHttpCallback;
 import com.example.friedegg.okhttp.OkHttpProxy;
 import com.example.friedegg.okhttp.VideoParser;
 import com.example.friedegg.utils.NetWorkUtil;
+import com.example.friedegg.utils.ShareUtils;
+import com.example.friedegg.utils.ShowToast;
+import com.example.friedegg.view.imageloader.ImageLoaderProxy;
 
 import java.util.ArrayList;
 
@@ -66,6 +81,58 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     @Override
     public void onBindViewHolder(VideoViewHolder holder, int position) {
+        final Video video = mVideos.get(position);
+        holder.tv_title.setText(video.getTitle());
+        holder.tv_comment_count.setText(video.getComment_count());
+        ImageLoaderProxy.displayImageWithLoadingPicture(video.getImgUrl(), holder.img, R.drawable.ic_loading_small);
+        //用于恢复默认的文字
+        holder.tv_like.setText(video.getVote_positive());
+        holder.tv_like.setTypeface(Typeface.DEFAULT);
+        holder.tv_like.setTextColor(mActivity.getResources().getColor(R.color.secondary_text_default_material_light));
+        holder.tv_support_des.setTextColor(mActivity.getResources().getColor(R.color.secondary_text_default_material_light));
+        holder.tv_unlike.setText(video.getVote_negative());
+        holder.tv_unlike.setTypeface(Typeface.DEFAULT);
+        holder.tv_unlike.setTextColor(mActivity.getResources().getColor(R.color.secondary_text_default_material_light));
+        holder.tv_un_support_des.setTextColor(mActivity.getResources().getColor(R.color.secondary_text_default_material_light));
+
+        holder.ll_comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity, CommentListActivity.class);
+                intent.putExtra(BaseActivity.DATA_THREAD_KEY, "comment-" + video.getComment_ID());
+                mActivity.startActivity(intent);
+            }
+        });
+        holder.img_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog dialog = new AlertDialog.Builder(mActivity).setItems(R.array.joke_dialog, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                ShareUtils.shareText(mActivity, video.getTitle().trim() + " " + video.getUrl());
+                                break;
+                            case 1:
+                                ClipboardManager clip = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+                                clip.setPrimaryClip(ClipData.newPlainText(null, video.getUrl()));
+                                ShowToast.Short(ConstantString.COPY_SUCCESS);
+                                break;
+                        }
+                    }
+                }).show();
+            }
+        });
+        holder.card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity, VideoDetailActivity.class);
+                intent.putExtra("url", video.getUrl());
+                mActivity.startActivity(intent);
+            }
+        });
+
+        setAnimation(holder.card, position);
 
     }
 
@@ -108,7 +175,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     private void loadCache() {
 
-       /* mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
+        mLoadResultCallBack.onSuccess(LoadResultCallBack.SUCCESS_OK, null);
         mLoadFinisCallBack.loadFinish(null);
         MyVideoCache videoCacheUtil = MyVideoCache.getInstance(mActivity);
         if (page == 1) {
@@ -116,7 +183,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             ShowToast.Short(ConstantString.LOAD_NO_NETWORK);
         }
         mVideos.addAll(videoCacheUtil.getCacheByPage(page));
-        notifyDataSetChanged();*/
+        notifyDataSetChanged();
 
     }
 
@@ -161,6 +228,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         });
 
     }
+
     static class VideoViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tv_title;
